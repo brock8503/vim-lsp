@@ -53,6 +53,10 @@ function! lsp#utils#is_file_uri(uri) abort
     return stridx(a:uri, 'file:///') == 0
 endfunction
 
+function! lsp#utils#is_jdt_uri(uri) abort
+    return stridx(a:uri, 'jdt://') == 0
+endfunction
+
 function! lsp#utils#is_remote_uri(uri) abort
     return a:uri =~# '^\w\+::' || a:uri =~# '^[a-z][a-z0-9+.-]*://'
 endfunction

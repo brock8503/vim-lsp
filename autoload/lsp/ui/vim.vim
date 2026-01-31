@@ -295,7 +295,7 @@ function! s:handle_location(ctx, server, type, data) abort "ctx = {counter, list
 
     if a:ctx['counter'] == 0
         if empty(a:ctx['list'])
-            call lsp#utils#error('No ' . a:type .' found')
+            call lsp#utils#error('LOL ' . a:type .' found')
         else
             call lsp#utils#tagstack#_update()
 
