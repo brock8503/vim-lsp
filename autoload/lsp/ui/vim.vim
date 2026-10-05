@@ -306,6 +306,26 @@ function! s:handle_location(ctx, server, type, data) abort "ctx = {counter, list
     endif
 
     if a:ctx['counter'] == 0
+        " Delegate to external handlers if response contains non-file:// URIs
+        if empty(a:ctx['list']) && !lsp#client#is_error(a:data['response']) && has_key(a:data['response'], 'result')
+            let l:result = type(a:data['response']['result']) == type([])
+                \ ? a:data['response']['result']
+                \ : [a:data['response']['result']]
+            for l:loc in l:result
+                let l:uri = has_key(l:loc, 'targetUri') ? l:loc['targetUri']
+                    \ : has_key(l:loc, 'uri') ? l:loc['uri'] : ''
+                if !empty(l:uri) && !lsp#utils#is_file_uri(l:uri)
+                    let g:lsp_custom_uri_data = {
+                        \ 'server': a:server,
+                        \ 'type': a:type,
+                        \ 'response': a:data['response'],
+                        \ }
+                    doautocmd <nomodeline> User lsp_custom_uri
+                    return
+                endif
+            endfor
+        endif
+
         if empty(a:ctx['list'])
             call lsp#utils#error('No ' . a:type .' found')
         else

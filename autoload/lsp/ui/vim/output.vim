@@ -147,11 +147,13 @@ function! lsp#ui#vim#output#floatingpreview(data) abort
         let l:options = {
             \ 'moved': 'any',
             \ 'border': [1, 1, 1, 1],
+            \ 'borderchars': ['━', '┃', '━', '┃', '┏', '┓', '┛', '┗'],
             \ 'callback': function('s:vim_popup_closed')
             \ }
 
         if g:lsp_preview_max_width > 0
             let l:options['maxwidth'] = g:lsp_preview_max_width
+            let l:options['minwidth'] = g:lsp_preview_max_width
         endif
 
         if g:lsp_preview_max_height > 0

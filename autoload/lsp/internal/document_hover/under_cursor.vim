@@ -267,18 +267,23 @@ function! s:get_doc_win() abort
     return s:doc_win
 endfunction
 
+" Anchor popup left edge after the line number gutter so it doesn't overlap.
+" Uses a public autoload function so changes can be hot-reloaded with :source.
 function! s:compute_position(size) abort
+    return lsp#internal#document_hover#under_cursor#compute_position(a:size)
+endfunction
+
+function! lsp#internal#document_hover#under_cursor#compute_position(size) abort
     let l:pos = screenpos(0, line('.'), col('.'))
     if l:pos.row == 0 && l:pos.col == 0
-        " workaround for float position
         let l:pos = {'curscol': wincol(), 'row': winline()}
     endif
-    let l:pos = [l:pos.row + 1, l:pos.curscol + 1]
+    let l:winpos = win_screenpos(0)
+    let l:textoff = getwininfo(win_getid())[0].textoff
+    let l:col = l:winpos[1] + l:textoff + 2
+    let l:pos = [l:pos.row + 1, l:col]
     if l:pos[0] + a:size.height > &lines
         let l:pos[0] = l:pos[0] - a:size.height - 3
-    endif
-    if l:pos[1] + a:size.width > &columns
-        let l:pos[1] = l:pos[1] - a:size.width - 3
     endif
     return l:pos
 endfunction
